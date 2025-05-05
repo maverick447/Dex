@@ -8,8 +8,11 @@
 import CoreData
 
 struct PersistenceController {
+    // static u might have many objects that are PersistenceController but all of the
+    // them point to a single PersistenceController (aka mimics Singleton pattern)
     static let shared = PersistenceController()
-
+ 
+    // The thing that controls our sample preview database
     @MainActor
     static let preview: PersistenceController = {
         let result = PersistenceController(inMemory: true)
@@ -28,9 +31,11 @@ struct PersistenceController {
         }
         return result
     }()
-
+    
+    // The thing that holds the stuff(the DataBase)
     let container: NSPersistentContainer
 
+    // Just a regular init function
     init(inMemory: Bool = false) {
         container = NSPersistentContainer(name: "Dex")
         if inMemory {
