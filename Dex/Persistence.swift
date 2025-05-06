@@ -52,9 +52,13 @@ struct PersistenceController {
         }
         container.loadPersistentStores(completionHandler: { (storeDescription, error) in
             if let error = error as NSError? {
-                fatalError("Unresolved error \(error), \(error.userInfo)")
+                //fatalError("Unresolved error \(error), \(error.userInfo)")
+                print(error)
             }
         })
+        // policy when a merge confict when data that is already there
+        // There are 3 different schemes but the one we chose is to reject newly found data
+        container.viewContext.mergePolicy = NSMergePolicy.mergeByPropertyStoreTrump
         container.viewContext.automaticallyMergesChangesFromParent = true
     }
 }
