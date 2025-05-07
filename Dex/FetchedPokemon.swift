@@ -49,14 +49,6 @@ struct FetchedPokemon: Decodable {
             case sprite = "frontDefault"
             case shiny = "frontShiny"
         }
-//        case hp
-//        case attack
-//        case defense
-//        case specialAttack
-//        case specialDefense
-//        case speed
-//        case sprite
-//        case shiny
     }
     
     init(from decoder: any Decoder) throws {
