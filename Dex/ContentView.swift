@@ -15,7 +15,9 @@ struct ContentView: View {
     @FetchRequest<Pokemon>(//sortDescriptors: [NSSortDescriptor(keyPath: \Pokemon.id, ascending: true)],// New API from CoreData
         sortDescriptors: [SortDescriptor(\.id)],
         animation: .default) private var pokedex//: FetchedResults
+    
     @State private var searchText: String = ""
+    @State private var filterByFavorites: Bool = false
     
     let fetcher = FetchService()
     
@@ -29,6 +31,9 @@ struct ContentView: View {
         }
         
         // Filter by Favorite predicate
+        if filterByFavorites {
+            predicates.append(NSPredicate(format: "favorite == %d",true))
+        }
         
         // Combine both predicates
         return NSCompoundPredicate(andPredicateWithSubpredicates: predicates)
@@ -51,10 +56,18 @@ struct ContentView: View {
                         .frame(width: 100, height: 100)
                         
                         VStack(alignment: .leading) {
-                            // Text(pokemon.name ?? "No name")
-                            // our instructor has taken the the latter
-                            Text(pokemon.name!.capitalized)
-                                .fontWeight(.bold)
+                            HStack {
+                                // Text(pokemon.name ?? "No name")
+                                // our instructor has taken the the latter
+                                Text(pokemon.name!.capitalized)
+                                    .fontWeight(.bold)
+                                
+                                if pokemon.favorite {
+                                    Image(systemName: "star.fill")
+                                        .foregroundColor(.yellow)
+                                }
+                            }
+                            
                             
                             HStack {
                                 ForEach(pokemon.types!, id: \.self) { type in
@@ -81,12 +94,20 @@ struct ContentView: View {
             .onChange(of: searchText) {
                 pokedex.nsPredicate = dynamicPredicate
             }
+            .onChange(of: filterByFavorites) {
+                pokedex.nsPredicate = dynamicPredicate
+            }
             .navigationDestination(for: Pokemon.self) { pokemon in
                 Text(pokemon.name ?? "no name")
             }
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    EditButton()
+                    Button {
+                        filterByFavorites.toggle()
+                    } label: {
+                        Label("Filter By Favorites", systemImage: filterByFavorites ? "star.fill" : "star")
+                    }
+                    .tint(.yellow)
                 }
                 ToolbarItem() {
                     Button("Add Item", systemImage: "plus") {
@@ -120,6 +141,9 @@ struct ContentView: View {
                     pokemon.sprite = fetchedPokemon.sprite
                     pokemon.shiny = fetchedPokemon.shiny
                     
+//                    if pokemon.id  % 2 == 0  {
+//                        pokemon.favorite = true
+//                    }
                     // CoreData saving
                     try viewContext.save()
                     
