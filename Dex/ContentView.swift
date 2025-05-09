@@ -108,14 +108,13 @@ struct ContentView: View {
                         Label("Filter By Favorites", systemImage: filterByFavorites ? "star.fill" : "star")
                     }
                     .tint(.yellow)
-                }
-                ToolbarItem() {
-                    Button("Add Item", systemImage: "plus") {
-                        getPokemon()
-                    }
-                }// ToolbarItem
+                }                
             } // End toolbar
         } // NavigationStack
+        // to automate a fill the view with pokemon
+        .task {
+            getPokemon()
+        }
     } // End of body
     
     private func getPokemon() {
