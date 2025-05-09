@@ -40,81 +40,91 @@ struct ContentView: View {
     }
 
     var body: some View {
-        //NavigationView {
-        // NavigationView is from the old recent is NavigationStack
-        NavigationStack {
-            List {
-                ForEach(pokedex) { pokemon in
-                    NavigationLink(value: pokemon) {
-                        AsyncImage(url: pokemon.sprite) { image in
-                            image
-                                .resizable()
-                                .scaledToFit()
-                        } placeholder: {
-                            ProgressView()
-                        }
-                        .frame(width: 100, height: 100)
-                        
-                        VStack(alignment: .leading) {
-                            HStack {
-                                // Text(pokemon.name ?? "No name")
-                                // our instructor has taken the the latter
-                                Text(pokemon.name!.capitalized)
-                                    .fontWeight(.bold)
-                                
-                                if pokemon.favorite {
-                                    Image(systemName: "star.fill")
-                                        .foregroundColor(.yellow)
-                                }
-                            }
-                            
-                            
-                            HStack {
-                                ForEach(pokemon.types!, id: \.self) { type in
-                                    Text(type.description.capitalized)
-                                        .font(.subheadline)
-                                        .fontWeight(.semibold)
-                                        .foregroundStyle(.black)
-                                        .padding(.horizontal, 13)
-                                        .padding(.vertical, 5)
-                                        .background(Color(type.capitalized))
-                                        .clipShape(Capsule())
-                                    
-                                }
-                            }
-                        }
-                    } //label: {
-                      //  Text(pokemon.name ?? "no name")
-                    //}
+        //if pokedex.count < 2 {
+        if pokedex.isEmpty {
+            ContentUnavailableView {
+                Label("No Pokemon", image: .nopokemon)
+            } description: {
+                Text("There aren't any Pokemon yet.\nFetch some Pokemon to get started!")
+            } actions: {
+                Button("Fetch Pokemon", systemImage: "antenna.radiowaves.left.and.right") {
+                    getPokemon()
                 }
-            }// End of list
-            .navigationTitle("Pokedex")
-            .searchable(text: $searchText, prompt: "Find a Pokemon")
-            .autocorrectionDisabled()
-            .onChange(of: searchText) {
-                pokedex.nsPredicate = dynamicPredicate
+                .buttonStyle(.borderedProminent)
             }
-            .onChange(of: filterByFavorites) {
-                pokedex.nsPredicate = dynamicPredicate
-            }
-            .navigationDestination(for: Pokemon.self) { pokemon in
-                Text(pokemon.name ?? "no name")
-            }
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button {
-                        filterByFavorites.toggle()
-                    } label: {
-                        Label("Filter By Favorites", systemImage: filterByFavorites ? "star.fill" : "star")
+        } else {
+            //NavigationView {
+            // NavigationView is from the old recent is NavigationStack
+            NavigationStack {
+                List {
+                    ForEach(pokedex) { pokemon in
+                        NavigationLink(value: pokemon) {
+                            AsyncImage(url: pokemon.sprite) { image in
+                                image
+                                    .resizable()
+                                    .scaledToFit()
+                            } placeholder: {
+                                ProgressView()
+                            }
+                            .frame(width: 100, height: 100)
+                            
+                            VStack(alignment: .leading) {
+                                HStack {
+                                    // Text(pokemon.name ?? "No name")
+                                    // our instructor has taken the the latter
+                                    Text(pokemon.name!.capitalized)
+                                        .fontWeight(.bold)
+                                    
+                                    if pokemon.favorite {
+                                        Image(systemName: "star.fill")
+                                            .foregroundColor(.yellow)
+                                    }
+                                }
+                                
+                                
+                                HStack {
+                                    ForEach(pokemon.types!, id: \.self) { type in
+                                        Text(type.description.capitalized)
+                                            .font(.subheadline)
+                                            .fontWeight(.semibold)
+                                            .foregroundStyle(.black)
+                                            .padding(.horizontal, 13)
+                                            .padding(.vertical, 5)
+                                            .background(Color(type.capitalized))
+                                            .clipShape(Capsule())
+                                        
+                                    }
+                                }
+                            }
+                        } //label: {
+                        //  Text(pokemon.name ?? "no name")
+                        //}
                     }
-                    .tint(.yellow)
-                }                
-            } // End toolbar
-        } // NavigationStack
-        // to automate a fill the view with pokemon
-        .task {
-            getPokemon()
-        }
+                }// End of list
+                .navigationTitle("Pokedex")
+                .searchable(text: $searchText, prompt: "Find a Pokemon")
+                .autocorrectionDisabled()
+                .onChange(of: searchText) {
+                    pokedex.nsPredicate = dynamicPredicate
+                }
+                .onChange(of: filterByFavorites) {
+                    pokedex.nsPredicate = dynamicPredicate
+                }
+                .navigationDestination(for: Pokemon.self) { pokemon in
+                    Text(pokemon.name ?? "no name")
+                }
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        Button {
+                            filterByFavorites.toggle()
+                        } label: {
+                            Label("Filter By Favorites", systemImage: filterByFavorites ? "star.fill" : "star")
+                        }
+                        .tint(.yellow)
+                    }
+                } // End toolbar
+            } // NavigationStack
+        } // if else
     } // End of body
     
     private func getPokemon() {
