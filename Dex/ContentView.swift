@@ -57,49 +57,64 @@ struct ContentView: View {
             // NavigationView is from the old recent is NavigationStack
             NavigationStack {
                 List {
-                    ForEach(pokedex) { pokemon in
-                        NavigationLink(value: pokemon) {
-                            AsyncImage(url: pokemon.sprite) { image in
-                                image
-                                    .resizable()
-                                    .scaledToFit()
-                            } placeholder: {
-                                ProgressView()
-                            }
-                            .frame(width: 100, height: 100)
-                            
-                            VStack(alignment: .leading) {
-                                HStack {
-                                    // Text(pokemon.name ?? "No name")
-                                    // our instructor has taken the the latter
-                                    Text(pokemon.name!.capitalized)
-                                        .fontWeight(.bold)
-                                    
-                                    if pokemon.favorite {
-                                        Image(systemName: "star.fill")
-                                            .foregroundColor(.yellow)
-                                    }
+                    Section {
+                        ForEach(pokedex) { pokemon in
+                            NavigationLink(value: pokemon) {
+                                AsyncImage(url: pokemon.sprite) { image in
+                                    image
+                                        .resizable()
+                                        .scaledToFit()
+                                } placeholder: {
+                                    ProgressView()
                                 }
+                                .frame(width: 100, height: 100)
                                 
-                                
-                                HStack {
-                                    ForEach(pokemon.types!, id: \.self) { type in
-                                        Text(type.description.capitalized)
-                                            .font(.subheadline)
-                                            .fontWeight(.semibold)
-                                            .foregroundStyle(.black)
-                                            .padding(.horizontal, 13)
-                                            .padding(.vertical, 5)
-                                            .background(Color(type.capitalized))
-                                            .clipShape(Capsule())
+                                VStack(alignment: .leading) {
+                                    HStack {
+                                        // Text(pokemon.name ?? "No name")
+                                        // our instructor has taken the the latter
+                                        Text(pokemon.name!.capitalized)
+                                            .fontWeight(.bold)
                                         
+                                        if pokemon.favorite {
+                                            Image(systemName: "star.fill")
+                                                .foregroundColor(.yellow)
+                                        }
+                                    }
+                                    
+                                    HStack {
+                                        ForEach(pokemon.types!, id: \.self) { type in
+                                            Text(type.description.capitalized)
+                                                .font(.subheadline)
+                                                .fontWeight(.semibold)
+                                                .foregroundStyle(.black)
+                                                .padding(.horizontal, 13)
+                                                .padding(.vertical, 5)
+                                                .background(Color(type.capitalized))
+                                                .clipShape(Capsule())
+                                            
+                                        }
                                     }
                                 }
+                            } //label: {
+                            //  Text(pokemon.name ?? "no name")
+                            //}
+                        } // For each
+                    }  footer: { // End of list
+                        if pokedex.count < 151 {
+                            ContentUnavailableView {
+                                Label("Missing Pokemon", image: .nopokemon)
+                            } description: {
+                                Text("The fetch was interrupted\nFetch the rest of the Pokemon.")
+                            } actions: {
+                                Button("Fetch Pokemon", systemImage: "antenna.radiowaves.left.and.right") {
+                                    getPokemon()
+                                }
+                                .buttonStyle(.borderedProminent)
                             }
-                        } //label: {
-                        //  Text(pokemon.name ?? "no name")
-                        //}
-                    }
+                        }
+                        
+                    }// End of Section
                 }// End of list
                 .navigationTitle("Pokedex")
                 .searchable(text: $searchText, prompt: "Find a Pokemon")
