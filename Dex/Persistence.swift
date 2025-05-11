@@ -11,9 +11,17 @@ struct PersistenceController {
     // static u might have many objects that are PersistenceController but all of the
     // them point to a single PersistenceController (aka mimics Singleton pattern)
     static let shared = PersistenceController()
+    
+    static var previewPokemon: Pokemon {
+        let context = PersistenceController.preview.container.viewContext
+        let fetchRequest: NSFetchRequest<Pokemon> = Pokemon.fetchRequest()
+        fetchRequest.fetchLimit = 1
+        let results = try! context.fetch(fetchRequest)
+        return results.first!
+    }
  
     // The thing that controls our sample preview database
-    @MainActor
+    //@MainActor
     static let preview: PersistenceController = {
         let result = PersistenceController(inMemory: true)
         let viewContext = result.container.viewContext
