@@ -10,7 +10,9 @@ import CoreData
 
 struct ContentView: View {
     @Environment(\.managedObjectContext) private var viewContext
-
+ 
+    @FetchRequest<Pokemon>(sortDescriptors: []) private var all
+        
     // For search of pokemons based on the pokemon.id
     @FetchRequest<Pokemon>(//sortDescriptors: [NSSortDescriptor(keyPath: \Pokemon.id, ascending: true)],// New API from CoreData
         sortDescriptors: [SortDescriptor(\.id)],
@@ -41,7 +43,7 @@ struct ContentView: View {
 
     var body: some View {
         //if pokedex.count < 2 {
-        if pokedex.isEmpty {
+        if all.isEmpty {
             ContentUnavailableView {
                 Label("No Pokemon", image: .nopokemon)
             } description: {
@@ -80,7 +82,7 @@ struct ContentView: View {
                                             Image(systemName: "star.fill")
                                                 .foregroundColor(.yellow)
                                         }
-                                    }
+                                    } // HStack
                                     
                                     HStack {
                                         ForEach(pokemon.types!, id: \.self) { type in
@@ -93,15 +95,29 @@ struct ContentView: View {
                                                 .background(Color(type.capitalized))
                                                 .clipShape(Capsule())
                                             
-                                        }
+                                        } // ForEach
+                                    } // HStack
+                                } // VStack
+                            } // NavigationLink
+                            .swipeActions(edge: .leading) {
+                                Button(pokemon.favorite ? "Remove from Favorites" :
+                                        "Add to Favorites", systemImage: "star") {
+                                    pokemon.favorite.toggle()
+                                    // Save to data
+                                    do {
+                                        try viewContext.save()
+                                    } catch {
+                                        print("Error saving data: \(error)")
                                     }
                                 }
-                            } //label: {
+                                .tint(pokemon.favorite ? .gray : .yellow)
+                            }
+                            //label: {
                             //  Text(pokemon.name ?? "no name")
                             //}
                         } // For each
                     }  footer: { // End of list
-                        if pokedex.count < 151 {
+                        if all.count < 151 {
                             ContentUnavailableView {
                                 Label("Missing Pokemon", image: .nopokemon)
                             } description: {
