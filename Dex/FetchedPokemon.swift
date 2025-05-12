@@ -70,6 +70,16 @@ struct FetchedPokemon: Decodable {
             let type = try typeContainer.decode(String.self, forKey: .name)
             decodedTypes.append(type)
         }
+        // Pidgeot
+        // issue with birds where we there two types normal and flying
+        // we would want to swap the two types by giving [0] == flying
+        // and [1] == normal
+        if decodedTypes.count == 2 && decodedTypes[0] == "normal" {
+            let tempType = decodedTypes[0]
+            decodedTypes[0] = decodedTypes[1]
+            decodedTypes[1] = tempType
+        }
+        
         self.types = decodedTypes
         
         // hp
