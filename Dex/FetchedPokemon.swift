@@ -75,9 +75,7 @@ struct FetchedPokemon: Decodable {
         // we would want to swap the two types by giving [0] == flying
         // and [1] == normal
         if decodedTypes.count == 2 && decodedTypes[0] == "normal" {
-            let tempType = decodedTypes[0]
-            decodedTypes[0] = decodedTypes[1]
-            decodedTypes[1] = tempType
+            decodedTypes.swapAt(0, 1)
         }
         
         self.types = decodedTypes
