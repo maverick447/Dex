@@ -8,6 +8,28 @@
 import SwiftUI
 
 extension Pokemon {
+    var spriteImage: Image {
+        // two let statements are there
+        // if both the let's are there then only if statement proceeds
+        if let data = sprite, let image = UIImage(data: data) {
+            // spriteImage is assigned
+            Image(uiImage: image)
+        }  else {
+            Image(.bulbasaur)
+        }
+    }
+    
+    var shinyImage: Image {
+        // two let statements are there
+        // if both the let's are there then only if statement proceeds
+        if let data = shiny, let image = UIImage(data: data) {
+            // spriteImage is assigned
+            Image(uiImage: image)
+        }  else {
+            Image(.shinybulbasaur)
+        }
+    }
+    
     var background: ImageResource {
         switch types![0] {
         case "rock", "ground", "steel", "fighting", "ghost", "dark", "psychic":
@@ -48,7 +70,6 @@ extension Pokemon {
 //        }!
         stats.max { $0.value < $1.value }!
     }
-    
 }
 
 struct Stat: Identifiable {
